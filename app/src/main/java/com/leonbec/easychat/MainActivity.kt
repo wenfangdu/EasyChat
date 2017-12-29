@@ -1,5 +1,6 @@
 package com.leonbec.easychat
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -33,15 +34,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun loginBtnNavHeaderClick(view: View){
+    fun loginBtnNavHeaderClick(view: View) {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun addChannelBtnClick(view: View) {
 
     }
 
-    fun addChannelBtnClick(view: View){
-
-    }
-
-    fun sendMsgBtnClick(view: View){
+    fun sendMsgBtnClick(view: View) {
 
     }
 }
