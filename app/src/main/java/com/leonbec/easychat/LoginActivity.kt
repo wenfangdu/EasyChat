@@ -1,5 +1,6 @@
 package com.leonbec.easychat
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -11,10 +12,11 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
     }
 
-    fun loginLoginBtnClick(view: View){
+    fun loginLoginBtnClick(view: View) {
     }
 
-    fun loginCreateUserBtnClick(view: View){
-
+    fun loginSignUpBtnClick(view: View) {
+        val intent = Intent(this, SignUpActivity::class.java)
+        startActivity(intent)
     }
 }
