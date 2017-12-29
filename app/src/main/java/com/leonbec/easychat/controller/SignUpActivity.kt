@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.leonbec.easychat.R
+import com.leonbec.easychat.service.AuthService
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import java.util.*
 
@@ -41,6 +42,6 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     fun createUser(view: View) {
-
+        AuthService.registerUser(this, "ff@t.com", "1234422") {}
     }
 }
