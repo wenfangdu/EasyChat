@@ -1,9 +1,10 @@
-package com.leonbec.easychat
+package com.leonbec.easychat.controller
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.leonbec.easychat.R
 
 class LoginActivity : AppCompatActivity() {
 
