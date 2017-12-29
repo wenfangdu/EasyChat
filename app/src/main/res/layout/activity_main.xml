@@ -18,24 +18,22 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main">
 
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <include
-                android:id="@+id/nav_drawer_header_include"
-                layout="@layout/nav_header_main" />
-
             <ListView
+                android:id="@+id/channelList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/nav_drawer_header_include"
-                android:id="@+id/channel_list">
+                android:layout_height="391dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
-            </ListView>
-        </RelativeLayout>
     </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>
