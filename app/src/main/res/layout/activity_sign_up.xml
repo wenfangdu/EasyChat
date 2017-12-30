@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/singUpEmailET"
+        android:id="@+id/signUpEmailET"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
@@ -46,7 +46,7 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/singUpEmailET" />
+        app:layout_constraintTop_toBottomOf="@+id/signUpEmailET" />
 
     <TextView
         android:id="@+id/textView6"
@@ -97,7 +97,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
         android:background="@color/colorPrimary"
-        android:onClick="createUser"
+        android:onClick="addUser"
         android:text="Sign up"
         android:textColor="@android:color/white"
         android:textSize="18sp"

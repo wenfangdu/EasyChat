@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.leonbec.easychat.R
 import com.leonbec.easychat.service.AuthService
+import com.leonbec.easychat.service.UserDataService
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import java.util.*
 
@@ -41,7 +42,21 @@ class SignUpActivity : AppCompatActivity() {
         bgColor = "[$savedR, $savedG, $savedB, 1]"
     }
 
-    fun createUser(view: View) {
-        AuthService.registerUser(this, "ff@t.com", "1234422") {}
+    fun addUser(view: View) {
+        val name = signUpUserNameET.text.toString()
+        val email = signUpEmailET.text.toString()
+        val password = signUpPwdET.text.toString()
+
+        AuthService.register(this, email, password) { success ->
+            if (success)
+                AuthService.login(this, email, password) { success ->
+                    if (success) {
+                        AuthService.addUser(this, name, email, avatar, bgColor) { success ->
+                            if (success)
+                                finish()
+                        }
+                    }
+                }
+        }
     }
 }
