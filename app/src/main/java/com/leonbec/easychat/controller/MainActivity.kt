@@ -13,15 +13,22 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.leonbec.easychat.R
+import com.leonbec.easychat.model.Channel
 import com.leonbec.easychat.service.AuthService
+import com.leonbec.easychat.service.MessageService
 import com.leonbec.easychat.service.UserDataService
 import com.leonbec.easychat.utility.BROADCAST_USER_DATA_CHANGE
+import com.leonbec.easychat.utility.SOCKET_URL
+import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_channel_dialog.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    val socket = IO.socket(SOCKET_URL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +43,15 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(userDataChangeReceiver,
                         IntentFilter(BROADCAST_USER_DATA_CHANGE))
+        socket.connect()
+        socket.on("channelCreated", channelCreatedListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(this)
+                .unregisterReceiver(userDataChangeReceiver)
+        socket.disconnect()
     }
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
@@ -82,9 +98,26 @@ class MainActivity : AppCompatActivity() {
                     .setPositiveButton("Add") { dialogInterface, i ->
                         val channelName = dialogView.addChannelNameET.text.toString()
                         val channelDesc = dialogView.addChannelDescET.text.toString()
+
+                        socket.emit("newChannel", channelName, channelDesc)
                     }
                     .setNegativeButton("Cancel") { dialogInterface, i -> }
                     .show()
+        }
+    }
+
+    private val channelCreatedListener = Emitter.Listener { args ->
+        runOnUiThread {
+            val channelName = args[0] as String
+            val channelDesc = args[1] as String
+            val channelId = args[2] as String
+
+            val newChannel = Channel(channelName, channelDesc, channelId)
+            MessageService.channels.add(newChannel)
+
+//            println(channelName)
+//            println(channelDesc)
+//            println(channelId)
         }
     }
 
