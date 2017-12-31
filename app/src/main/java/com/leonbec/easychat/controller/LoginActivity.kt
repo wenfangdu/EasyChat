@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun errorToast() {
-        Toast.makeText(this, "Something went wrong, please try again.",
+        Toast.makeText(this, "Something went wrong, please try again later.",
                 Toast.LENGTH_LONG).show()
         enableSpinner(false)
     }
