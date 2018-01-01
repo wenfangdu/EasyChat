@@ -39,10 +39,9 @@ object AuthService {
                     complete(true)
                 },
                 Response.ErrorListener { error ->
-                    Log.d("ERROR", "Could not register user: $error")
+                    Log.d("ERROR", "Could not register user")
                     complete(false)
-                }
-        ) {
+                }) {
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
@@ -81,10 +80,9 @@ object AuthService {
                     }
                 },
                 Response.ErrorListener { error ->
-                    Log.d("ERROR", "Could not login user: $error")
+                    Log.d("ERROR", "Could not login user")
                     complete(false)
-                }
-        ) {
+                }) {
             override fun getBodyContentType(): String {
                 return "application/json; charset-utf=8"
             }
@@ -128,10 +126,9 @@ object AuthService {
                     }
                 },
                 Response.ErrorListener { error ->
-                    Log.d("ERROR", "Could not add user $error")
+                    Log.d("ERROR", "Could not add user")
                     complete(false)
-                }
-        ) {
+                }) {
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
@@ -172,7 +169,7 @@ object AuthService {
                     }
                 },
                 Response.ErrorListener { error ->
-                    Log.d("ERROR", "Could not find user: $error")
+                    Log.d("ERROR", "Could not find user")
                     complete(false)
                 }) {
             override fun getBodyContentType(): String {
