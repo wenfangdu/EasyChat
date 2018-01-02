@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.ArrayAdapter
 import com.leonbec.easychat.R
 import com.leonbec.easychat.model.Channel
 import com.leonbec.easychat.service.AuthService
@@ -29,6 +30,14 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 class MainActivity : AppCompatActivity() {
 
     val socket = IO.socket(SOCKET_URL)
+    lateinit var channelAdapter: ArrayAdapter<Channel>
+
+    private fun setupAdapter() {
+        channelAdapter = ArrayAdapter(this,
+                android.R.layout.simple_list_item_1,
+                MessageService.channels)
+        channelLV.adapter = channelAdapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +54,8 @@ class MainActivity : AppCompatActivity() {
                         IntentFilter(BROADCAST_USER_DATA_CHANGE))
         socket.connect()
         socket.on("channelCreated", channelCreatedListener)
+
+        setupAdapter()
     }
 
     override fun onDestroy() {
@@ -55,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+        override fun onReceive(context: Context, intent: Intent?) {
             if (AuthService.isLoggedIn) {
                 userNameNavHeader.text = UserDataService.name
                 userEmailNavHeader.text = UserDataService.email
@@ -63,6 +74,10 @@ class MainActivity : AppCompatActivity() {
                 userImageNavHeader.setImageResource(resId)
                 userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
                 loginBtnNavHeader.text = "Logout"
+
+                MessageService.getChannels(context) { success ->
+                    if (success) channelAdapter.notifyDataSetChanged()
+                }
             }
         }
     }
@@ -114,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 
             val newChannel = Channel(channelName, channelDesc, channelId)
             MessageService.channels.add(newChannel)
-
+            channelAdapter.notifyDataSetChanged()
 //            println(channelName)
 //            println(channelDesc)
 //            println(channelId)
