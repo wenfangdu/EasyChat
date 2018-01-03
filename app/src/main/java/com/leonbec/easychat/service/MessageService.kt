@@ -1,13 +1,12 @@
 package com.leonbec.easychat.service
 
-import android.content.Context
 import android.util.Log
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
 import com.leonbec.easychat.controller.App
 import com.leonbec.easychat.model.Channel
-import com.leonbec.easychat.utility.URL_GET_CHANNEL
+import com.leonbec.easychat.model.Message
+import com.leonbec.easychat.util.URL_GET_CHANNEL
 import org.json.JSONException
 
 /**
@@ -15,6 +14,7 @@ import org.json.JSONException
  */
 object MessageService {
     val channels = ArrayList<Channel>()
+    val messages = ArrayList<Message>()
 
     fun getChannels(complete: (Boolean) -> Unit) {
         val request = object : JsonArrayRequest(

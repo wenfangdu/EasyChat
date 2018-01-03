@@ -9,8 +9,7 @@ import android.view.View
 import android.widget.Toast
 import com.leonbec.easychat.R
 import com.leonbec.easychat.service.AuthService
-import com.leonbec.easychat.service.UserDataService
-import com.leonbec.easychat.utility.BROADCAST_USER_DATA_CHANGE
+import com.leonbec.easychat.util.BROADCAST_USER_DATA_CHANGE
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import java.util.*
 

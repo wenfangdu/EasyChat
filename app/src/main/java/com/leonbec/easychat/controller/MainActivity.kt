@@ -11,16 +11,17 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
 import com.leonbec.easychat.R
 import com.leonbec.easychat.model.Channel
+import com.leonbec.easychat.model.Message
 import com.leonbec.easychat.service.AuthService
 import com.leonbec.easychat.service.MessageService
 import com.leonbec.easychat.service.UserDataService
-import com.leonbec.easychat.utility.BROADCAST_USER_DATA_CHANGE
-import com.leonbec.easychat.utility.SOCKET_URL
+import com.leonbec.easychat.util.BROADCAST_USER_DATA_CHANGE
+import com.leonbec.easychat.util.SOCKET_URL
+import com.leonbec.easychat.util.hideKeyboard
 import io.socket.client.IO
 import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity() {
                         IntentFilter(BROADCAST_USER_DATA_CHANGE))
         socket.connect()
         socket.on("channelCreated", channelCreatedListener)
+        socket.on("messageCreated", messageCreatedListener)
         setupAdapter()
 
         channelLV.setOnItemClickListener { adapterView, view, i, l ->
@@ -152,13 +154,33 @@ class MainActivity : AppCompatActivity() {
             val newChannel = Channel(channelName, channelDesc, channelId)
             MessageService.channels.add(newChannel)
             channelAdapter.notifyDataSetChanged()
-//            println(channelName)
-//            println(channelDesc)
-//            println(channelId)
+        }
+    }
+
+    private val messageCreatedListener = Emitter.Listener { args ->
+        runOnUiThread {
+            val msgBody = args[0] as String
+            val channelId = args[2] as String
+            val userName = args[3] as String
+            val userAvatar = args[4] as String
+            val userAvatarColor = args[5] as String
+            val id = args[6] as String
+            val timeStamp = args[7] as String
+
+            val newMsg = Message(msgBody, channelId, userName, userAvatar, userAvatarColor, id, timeStamp)
+            MessageService.messages.add(newMsg)
         }
     }
 
     fun sendMsgBtnClick(view: View) {
-
+        if (App.preference.isLoggedIn && msgMT.text.isNotEmpty() && selectedChannel != null) {
+            val userId = UserDataService.id
+            val channelId = selectedChannel!!.id
+            socket.emit("newMessage", msgMT.text.toString(),
+                    userId, channelId, UserDataService.name, UserDataService.avatarName,
+                    UserDataService.avatarColor)
+            msgMT.text.clear()
+            view.hideKeyboard()
+        }
     }
 }

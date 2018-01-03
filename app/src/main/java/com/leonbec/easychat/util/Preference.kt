@@ -1,4 +1,4 @@
-package com.leonbec.easychat.utility
+package com.leonbec.easychat.util
 
 import android.content.Context
 import android.content.SharedPreferences

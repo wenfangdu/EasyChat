@@ -1,4 +1,4 @@
-package com.leonbec.easychat.utility
+package com.leonbec.easychat.util
 
 /**
  * Created by leonbec on 2017/12/30.
