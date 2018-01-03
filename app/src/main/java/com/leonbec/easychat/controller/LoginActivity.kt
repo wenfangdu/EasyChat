@@ -24,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         val password = loginPasswordET.text.toString()
 
         if (email.isNotBlank() && password.isNotBlank())
-            AuthService.login(this, email, password) { success ->
+            AuthService.login(email, password) { success ->
                 if (success) AuthService.findUserByEmail(this) { success ->
                     if (success) {
                         enableSpinner(false)

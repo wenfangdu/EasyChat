@@ -8,6 +8,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.leonbec.easychat.controller.App
 import com.leonbec.easychat.utility.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -17,15 +18,10 @@ import java.lang.invoke.MethodHandle
  * Created by leonbec on 2017/12/30.
  */
 object AuthService {
-    var isLoggedIn = false
-    var userEmail = ""
-    var authToken = ""
 
-    fun register(
-            context: Context,
-            email: String,
-            password: String,
-            complete: (Boolean) -> Unit) {
+    fun register(email: String,
+                 password: String,
+                 complete: (Boolean) -> Unit) {
         val jsonBody = JSONObject()
         jsonBody.put("email", email)
         jsonBody.put("password", password)
@@ -51,11 +47,10 @@ object AuthService {
             }
         }
 
-        Volley.newRequestQueue(context).add(registerRequest)
+        App.preference.requestQueue.add(registerRequest)
     }
 
-    fun login(context: Context,
-              email: String,
+    fun login(email: String,
               password: String,
               complete: (Boolean) -> Unit) {
         val jsonBody = JSONObject()
@@ -70,9 +65,9 @@ object AuthService {
                 Response.Listener { response ->
                     //                    println(response)
                     try {
-                        userEmail = response.getString("user")
-                        authToken = response.getString("token")
-                        isLoggedIn = true
+                        App.preference.userEmail = response.getString("user")
+                        App.preference.authToken = response.getString("token")
+                        App.preference.isLoggedIn = true
                         complete(true)
                     } catch (e: JSONException) {
                         Log.d("JSON", "EXCEPTION: ${e.message}")
@@ -92,11 +87,10 @@ object AuthService {
             }
         }
 
-        Volley.newRequestQueue(context).add(loginRequest)
+        App.preference.requestQueue.add(loginRequest)
     }
 
-    fun addUser(context: Context,
-                name: String,
+    fun addUser(name: String,
                 email: String,
                 avatarName: String,
                 avatarColor: String,
@@ -139,18 +133,18 @@ object AuthService {
 
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer $authToken")
+                headers.put("Authorization", "Bearer ${App.preference.authToken}")
                 return headers
             }
         }
 
-        Volley.newRequestQueue(context).add(addUserRequest)
+        App.preference.requestQueue.add(addUserRequest)
     }
 
     fun findUserByEmail(context: Context, complete: (Boolean) -> Unit) {
         val findUserRequest = object : JsonObjectRequest(
                 Method.GET,
-                "$URL_GET_USER$userEmail",
+                "$URL_GET_USER${App.preference.userEmail}",
                 null,
                 Response.Listener { response ->
                     try {
@@ -178,10 +172,10 @@ object AuthService {
 
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer $authToken")
+                headers.put("Authorization", "Bearer ${App.preference.authToken}")
                 return headers
             }
         }
-        Volley.newRequestQueue(context).add(findUserRequest)
+        App.preference.requestQueue.add(findUserRequest)
     }
 }

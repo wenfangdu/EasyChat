@@ -11,6 +11,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
 import com.leonbec.easychat.R
@@ -25,12 +26,14 @@ import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.add_channel_dialog.view.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    val socket = IO.socket(SOCKET_URL)
+    private val socket = IO.socket(SOCKET_URL)
     lateinit var channelAdapter: ArrayAdapter<Channel>
+    var selectedChannel: Channel? = null
 
     private fun setupAdapter() {
         channelAdapter = ArrayAdapter(this,
@@ -54,8 +57,16 @@ class MainActivity : AppCompatActivity() {
                         IntentFilter(BROADCAST_USER_DATA_CHANGE))
         socket.connect()
         socket.on("channelCreated", channelCreatedListener)
-
         setupAdapter()
+
+        channelLV.setOnItemClickListener { adapterView, view, i, l ->
+            selectedChannel = MessageService.channels[i]
+            drawer_layout.closeDrawer(GravityCompat.START)
+            updateWithChannel()
+        }
+
+        if (App.preference.isLoggedIn)
+            AuthService.findUserByEmail(this) {}
     }
 
     override fun onDestroy() {
@@ -67,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     private val userDataChangeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {
-            if (AuthService.isLoggedIn) {
+            if (App.preference.isLoggedIn) {
                 userNameNavHeader.text = UserDataService.name
                 userEmailNavHeader.text = UserDataService.email
                 val resId = resources.getIdentifier(UserDataService.avatarName, "drawable", packageName)
@@ -75,11 +86,22 @@ class MainActivity : AppCompatActivity() {
                 userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
                 loginBtnNavHeader.text = "Logout"
 
-                MessageService.getChannels(context) { success ->
-                    if (success) channelAdapter.notifyDataSetChanged()
+                MessageService.getChannels { success ->
+                    if (success) {
+                        if (MessageService.channels.count() > 0) {
+                            selectedChannel = MessageService.channels[0]
+                            channelAdapter.notifyDataSetChanged()
+                            updateWithChannel()
+                        } else mainChannelName.text = "No channel selected"
+                    }
                 }
             }
         }
+    }
+
+    fun updateWithChannel() {
+        mainChannelName.text = "#${selectedChannel?.name}"
+        //download msgs for channel
     }
 
     override fun onBackPressed() {
@@ -91,7 +113,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginBtnNavHeaderClick(view: View) {
-        if (AuthService.isLoggedIn) {
+        if (App.preference.isLoggedIn) {
             UserDataService.logout()
             userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
@@ -105,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addChannelBtnClick(view: View) {
-        if (AuthService.isLoggedIn) {
+        if (App.preference.isLoggedIn) {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
 

@@ -54,9 +54,9 @@ class SignUpActivity : AppCompatActivity() {
         val password = signUpPwdET.text.toString()
 
         if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
-            AuthService.register(this, email, password) { success ->
-                if (success) AuthService.login(this, email, password) { success ->
-                    if (success) AuthService.addUser(this, name, email, avatar, bgColor) { success ->
+            AuthService.register(email, password) { success ->
+                if (success) AuthService.login(email, password) { success ->
+                    if (success) AuthService.addUser(name, email, avatar, bgColor) { success ->
                         if (success) {
                             val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE)
                             LocalBroadcastManager.getInstance(this).sendBroadcast(userDataChange)

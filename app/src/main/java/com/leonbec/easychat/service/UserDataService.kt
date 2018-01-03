@@ -1,6 +1,7 @@
 package com.leonbec.easychat.service
 
 import android.graphics.Color
+import com.leonbec.easychat.controller.App
 import java.util.*
 
 /**
@@ -19,9 +20,10 @@ object UserDataService {
         avatarName = ""
         email = ""
         name = ""
-        AuthService.authToken = ""
-        AuthService.userEmail = ""
-        AuthService.isLoggedIn = false
+        MessageService.channels.clear()
+        App.preference.authToken = ""
+        App.preference.userEmail = ""
+        App.preference.isLoggedIn = false
     }
 
     fun returnAvatarColor(components: String): Int {
